@@ -141,8 +141,67 @@ def main():
                     time.sleep(2)
                     st.rerun()
 
-        # ... (Remaining Salesperson tabs 1-5 from original code) ...
-        # [Note: Kept original logic for update/delete/view/search]
+        
+        with tabs[1]:
+            st.subheader("Update All Fields by OrderID")
+            search_oid = st.text_input("Enter OrderID to Modify")
+            if search_oid:
+                record = my_data[my_data["OrderID"].astype(str) == search_oid]
+                if not record.empty:
+                    with st.form("full_up_form"):
+                        u1, u2, u3 = st.columns(3)
+                        u_name = u1.text_input("Customer Name", value=record.iloc[0]['CustomerName'])
+                        u_ct = u1.selectbox("Customer Type", get_choices(df_all, "CustomerType", ["Retail"]), index=0)
+                        u_prod = u1.selectbox("Product", get_choices(df_all, "Product", ["Laptop"]), index=0)
+                        u_qty = u1.number_input("Quantity", value=int(record.iloc[0]['Quantity']))
+                        u_up = u2.number_input("Unit Price", value=float(record.iloc[0]['UnitPrice']))
+                        u_disc = u2.number_input("Discount", value=float(record.iloc[0].get('Discount', 0.0)))
+                        u_reg = u2.selectbox("Region", get_choices(df_all, "Region", ["North"]), index=0)
+                        u_loc = u2.selectbox("Store Location", get_choices(df_all, "StoreLocation", ["Store A"]), index=0)
+                        u_pay = u3.selectbox("Payment Method", ["Cash", "Card", "Online"])
+                        u_prom = u3.text_input("Promotion", value=str(record.iloc[0].get('Promotion', '')))
+                        u_ret = u3.text_input("Returned (Status)", value=str(record.iloc[0].get('Returned', 'No')))
+                        u_ship = u3.number_input("Shipping Cost", value=float(record.iloc[0].get('ShippingCost', 0.0)))
+                        
+                        # Fix NameError here: using correct u_ variables
+                        up_calc_total = (u_qty * u_up) - u_disc + u_ship
+                        u2.number_input("Total Price (Calculated)", value=up_calc_total, disabled=True)
+
+                        if st.form_submit_button("Apply Full Update"):
+                            with conn.session as s:
+                                s.execute(text("""UPDATE sales SET CustomerName=:n, CustomerType=:ct, Product=:p, Quantity=:q, Region=:r, UnitPrice=:up, StoreLocation=:sl, Discount=:di, TotalPrice=:tp, PaymentMethod=:pm, Promotion=:pr, Returned=:re, ShippingCost=:sc WHERE OrderID=:oid AND Salesperson=:u"""),
+                                          {"n":u_name, "ct":u_ct, "p":u_prod, "q":u_qty, "r":u_reg.lower(), "up":u_up, "sl":u_loc.lower(), "di":u_disc, "tp":u_qty*u_up - u_disc + u_ship, "pm":u_pay, "pr":u_prom, "re":u_ret, "sc":u_ship, "oid":search_oid, "u":user})
+                                s.commit()
+                            msg = st.empty()
+                            msg.success(f"✅ Order {search_oid} updated successfully!")
+                            time.sleep(5)
+                            msg.empty()
+                            st.rerun()
+                else: st.warning("OrderID not found.")
+
+        with tabs[2]:
+            st.subheader("Delete Customer Record")
+            search_input = st.text_input("Search Customer Name to Delete")
+            if search_input:
+                matches = my_data[my_data["CustomerName"].str.contains(search_input, case=False, na=False)]
+                if not matches.empty:
+                    match_list = [f"{row['CustomerName']} | {row['OrderID']} | {row['Product']}" for _, row in matches.iterrows()]
+                    selected_match = st.selectbox("Select exact entry", match_list)
+                    if st.button("Permanently Delete", type="primary"):
+                        target_oid = selected_match.split(" | ")[1]
+                        with conn.session as s:
+                            s.execute(text("DELETE FROM sales WHERE OrderID=:oid AND Salesperson=:u"), 
+                                      {"oid":target_oid, "u":user})
+                            s.commit()
+                        msg = st.empty()
+                        msg.success(f"🗑️ Record {target_oid} deleted!")
+                        time.sleep(5)
+                        msg.empty()
+                        st.rerun()
+
+        with tabs[3]: 
+            st.dataframe(my_data)
+            
         with tabs[3]: st.dataframe(my_data)
         with tabs[5]: 
             if not my_data.empty:
