@@ -203,6 +203,19 @@ def main():
             st.dataframe(my_data)
             
         with tabs[3]: st.dataframe(my_data)
+
+        with tabs[4]: 
+            st.subheader("Search Customer Records")
+            query = st.text_input("Enter Customer Name")
+            if query:
+                res = my_data[my_data["CustomerName"].str.contains(query, case=False, na=False)]
+                if not res.empty:
+                    for idx, row in res.iterrows():
+                        with st.expander(f"Details: {row['CustomerName']} (ID: {row['OrderID']})"):
+                            st.json(row.to_dict()) 
+                else: st.warning("No matches found.")
+
+        
         with tabs[5]: 
             if not my_data.empty:
                 st.subheader("Your Sales Analytics")
