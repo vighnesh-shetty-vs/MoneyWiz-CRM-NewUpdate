@@ -24,34 +24,6 @@ Product Recommendations: Cross-sell suggestions via correlation analysis.
 
 Tech Stack
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ComponentTechnologyFrontendStreamlitBackend/DBSQLite + SQLAlchemyData ProcessingPandas, NumPyML ModelsScikit-learnVisualizationPlotly Express
 
 Installation
@@ -86,9 +58,25 @@ Future Enhancements
 
 Migrate to PostgreSQL for persistent storage.
 Advanced forecasting (ARIMA/Prophet).
+
 Automated KPI reporting via email.
 Sentiment analysis on promotions/feedback.
 
 
 GitHub Repository
 https://github.com/vighnesh-shetty-vs/MoneyWiz-CRM-NewUpdate
+
+
+Sample Users from dataset -
+
+Salesperson -
+
+username - Eva
+password - password123
+
+Region Manager -
+
+Salesperson -
+
+username - Eric
+password - password123
