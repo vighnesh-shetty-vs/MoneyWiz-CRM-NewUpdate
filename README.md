@@ -1,3 +1,14 @@
+# MoneyWiz CRM · Version 2
+
+> Version 2 (Dec 2025 – Jan 2026) turns the [Version 1 notebook project](https://github.com/vighnesh-shetty-vs/MoneyWiz-CRM-Project) into a deployed Streamlit app with role-based views, a SQLite database, sales forecasting, K-Means segmentation and product recommendations.
+
+| | Version 1 | Version 2 |
+|---|---|---|
+| Format | Jupyter Notebook | Streamlit web app ([live](https://moneywiz-crm-newupdate-bexgwqs8fhq96q5aks7anm.streamlit.app/)) |
+| Data | Excel file | SQLite via SQLAlchemy |
+| Analytics | Cleaning, grouping, Matplotlib charts | KPIs, 3-month linear-regression forecast, K-Means segments, cross-sell suggestions |
+| Users | Analyst | Salesperson and Region Manager views |
+
 MoneyWiz CRM is a Streamlit-based CRM and analytics platform designed for retail businesses. It bridges operational sales management and managerial insights with:
 
 Salesperson Workspace: Customer CRUD operations, search, and personal sales analytics.
